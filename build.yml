@@ -1,0 +1,17 @@
+name: Build
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '8'}
+      - run: |
+          unzip -q LuviaClient.zip
+          wget -q https://services.gradle.org/distributions/gradle-2.14.1-bin.zip
+          unzip -q gradle-2.14.1-bin.zip -d $HOME
+          cd LuviaClient
+          $HOME/gradle-2.14.1/bin/gradle setupCIWorkspace build --no-daemon
+      - uses: actions/upload-artifact@v4
+        with: {name: LuviaClient-jar, path: LuviaClient/build/libs/*.jar}
